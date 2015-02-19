@@ -1,5 +1,5 @@
 (ns collabj.core
-  (:use [compojure.core :only (defroutes GET)]
+  (:use [compojure.core :only (defroutes GET routes)]
         ring.util.response
         org.httpkit.server)
   (:require [compojure.route :as route]
@@ -30,14 +30,20 @@
           (Thread/sleep 5000)
           (recur)))
 
-(defroutes app
+(defroutes app-routes
+  (route/resources "/")
   (GET "/ws" [] add-client)
-  (GET "/" [] index))
+  (GET "/" [] index)
+  (route/not-found "Not found."))
 
-(def application (-> (handler/site app)
+(def app-handler (-> (handler/site app-routes)
                      reload/wrap-reload))
+
+(defn app
+  [req]
+  (app-handler req))
 
 (defn -main [& args]
   (let [port (Integer/parseInt 
                (or (System/getenv "PORT") "8080"))]
-    (run-server application {:port port :join? false})))
+    (run-server app {:port port :join? false})))

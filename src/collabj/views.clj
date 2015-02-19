@@ -1,6 +1,12 @@
 (ns collabj.views
-  (:use hiccup.page))
+  (:use hiccup.page hiccup.core))
+
+(def scripts
+  (html [:script { :src "gen/main.js" }]))
 
 (defn index
   []
-  (html5 [:body, [:p "Hello world!"]]))
+  (html5
+    [:body
+     [:p "Hello world!"]
+     scripts]))
