@@ -11,7 +11,14 @@ TODO
 
 ## Usage
 
-TODO
+To try it out:
+
+    lein deps
+    lein cljsbuild once
+    lein run
+
+To develop, use `lein cljsbuild auto` command, start `lein repl` and do
+`(-main)` in REPL
 
 ## License
 
