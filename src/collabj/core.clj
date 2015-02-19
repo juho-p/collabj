@@ -1,7 +1,6 @@
 (ns collabj.core
   (:use [compojure.core :only (defroutes GET)]
         ring.util.response
-        ring.middleware.cors
         org.httpkit.server)
   (:require [compojure.route :as route]
             [compojure.handler :as handler]
