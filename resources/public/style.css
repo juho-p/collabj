@@ -1,1 +1,9 @@
+#board-container {
+    background-color: blue;
+    width: 520px;
+    height: 520px;
+}
 
+#drawing-board {
+    margin: 10px;
+}

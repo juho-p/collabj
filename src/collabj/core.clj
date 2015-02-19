@@ -20,15 +20,13 @@
   (with-channel req con
     (swap! clients assoc con true)
     (println con " connected")
+    (on-receive con
+                (fn [data]
+                  (doseq [client @clients]
+                    (send! (key client) data false))))
     (on-close con (fn [status]
                     (swap! clients dissoc con)
                     (println con " disconnected. status: " status)))))
-
-(future (loop []
-          (doseq [client @clients]
-            (send! (key client) "Hello\n" false))
-          (Thread/sleep 5000)
-          (recur)))
 
 (defroutes app-routes
   (route/resources "/")
