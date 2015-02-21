@@ -85,7 +85,7 @@
 
   (dom/listen canvas "mousemove"
               (fn [ev]
-                (if (= (.-buttons ev) 1)
+                (if (= 1 (if (nil? (.-buttons ev)) (.-which ev) (.-buttons ev)))
                   (let [x (mouse-x canvas ev)
                         y (mouse-y canvas ev) t (now)]
                     (if (get-in @current-state [:mouse :pressed])
