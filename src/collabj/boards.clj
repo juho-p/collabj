@@ -17,7 +17,7 @@
   [board-id client]
   (dosync
     (let [new-clients (dissoc (:clients @(@boards board-id)) client)]
-      (if (empty? (:clients new-clients))
+      (if (empty? new-clients)
         (alter boards dissoc board-id)
         (alter (@boards board-id) assoc :clients new-clients)))))
 
@@ -38,7 +38,6 @@
     (on-receive con
                 (fn [data]
                   (add-content board-id data)
-                  (println @boards)
                   (doseq [client (:clients @(@boards board-id))]
                     (send! (key client) data false))))
     (on-close con (fn [status]
