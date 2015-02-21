@@ -7,3 +7,6 @@
 
 (defn listen [elem eventname fun]
   (.addEventListener elem eventname fun))
+
+(defn attr [elem attr-name]
+  (.getAttribute elem attr-name))

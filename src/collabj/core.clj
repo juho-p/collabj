@@ -10,14 +10,15 @@
             [collabj.views :as views]
             [collabj.boards :as boards]))
 
-(defn index
+(defn ws
   [req]
-  (views/index))
+  (boards/add-client req (get-in req [:params :board])))
 
 (defroutes app-routes
   (route/resources "/")
-  (GET "/ws" [] boards/add-client)
-  (GET "/" [] index)
+  (GET "/" [] views/index)
+  (GET "/board/:board" [board] (views/board {:board board}))
+  (GET "/ws/:board" [board] ws)
   (route/not-found "Not found."))
 
 (def app-handler (-> (handler/site app-routes)

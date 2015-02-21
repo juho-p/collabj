@@ -2,7 +2,8 @@
   (:require
     [collabj.dom :as dom]
     [collabj.gfx :as gfx]
-    [clojure.string :as string]))
+    [clojure.string :as string]
+    [cljs.reader :as edn]))
 
 (enable-console-print!)
 
@@ -48,13 +49,32 @@
           (.-clientTop element))
        (.-scrollTop element))))
 
-(defn main []
+(defn go-board [board]
+  (set! (.-location dom/window) (str "/board/" board)))
+
+(defn index-main []
+  (let [[inp btn] (map dom/by-id ["board-input" "board-btn"])]
+    (letfn [(get-board [] (.-value inp))]
+      (dom/listen btn "click" #(go-board (get-board)))
+      (dom/listen inp "keypress"
+                  (fn [ev]
+                    (if (= 13 (.-keyCode ev))
+                      (go-board (get-board))))))))
+
+(defn board-main []
+  (def config
+    (-> "config"
+        (dom/by-id)
+        (dom/attr "data-edn")
+        (edn/read-string)))
   (def canvas (dom/by-id "drawing-board"))
   (def ctx (gfx/context canvas))
   (set! (.-ctx js/window) ctx)
 
+  (println "config is: " config)
+
   (swap! server (fn [_]
-                  (js/WebSocket. "ws://localhost:8080/ws")))
+                  (js/WebSocket. (str "ws://localhost:8080/ws/" (:board config)))))
   (set! (.-onmessage @server)
         (fn [message]
           (let [l (map js/parseInt
@@ -78,6 +98,12 @@
                                           #(assoc % :pressed true :time t :x x :y y))))))
                   (swap! current-state assoc-in [:mouse :pressed] false))
                 (draw))))
+
+(defn main []
+
+  (if (not (nil? (dom/by-id "drawing-board")))
+    (board-main)
+    (index-main)))
 
 (set! (.-onload dom/window) main)
 
