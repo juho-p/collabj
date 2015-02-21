@@ -7,30 +7,16 @@
             [ring.middleware.reload :as reload]
             [compojure.core :refer :all]
             [compojure.route :as route]
-            [collabj.views :as views]))
+            [collabj.views :as views]
+            [collabj.boards :as boards]))
 
 (defn index
   [req]
   (views/index))
 
-(def clients (atom {}))
-
-(defn add-client
-  [req]
-  (with-channel req con
-    (swap! clients assoc con true)
-    (println con " connected")
-    (on-receive con
-                (fn [data]
-                  (doseq [client @clients]
-                    (send! (key client) data false))))
-    (on-close con (fn [status]
-                    (swap! clients dissoc con)
-                    (println con " disconnected. status: " status)))))
-
 (defroutes app-routes
   (route/resources "/")
-  (GET "/ws" [] add-client)
+  (GET "/ws" [] boards/add-client)
   (GET "/" [] index)
   (route/not-found "Not found."))
 
