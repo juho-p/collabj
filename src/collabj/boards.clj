@@ -30,7 +30,4 @@
                     (send! (key client) data false))))
     (on-close con (fn [status]
                     (remove-client-from-board board-id con)
-                    (println "BOARDS:")
-                    (doseq [board @boards]
-                      (println board))
                     (println con " disconnected. status: " status)))))

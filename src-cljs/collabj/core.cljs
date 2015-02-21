@@ -71,8 +71,6 @@
   (def ctx (gfx/context canvas))
   (set! (.-ctx js/window) ctx)
 
-  (println "config is: " config)
-
   (swap! server (fn [_]
                   (js/WebSocket. (str "ws://localhost:8080/ws/" (:board config)))))
   (set! (.-onmessage @server)
