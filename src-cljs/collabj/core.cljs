@@ -20,19 +20,13 @@
     (if (> (- t (get-in state [:mouse :time])) 50)
       (-> state
           (update-in [:mouse]
-                     (fn [mouse]
-                       (assoc mouse
-                              :x x
-                              :y y
-                              :time t)))
+                     #(assoc % :x x :y y :time t))
           (update-in [:drawings]
-                     (fn [draw]
-                       (conj draw [ox oy x y]))))
+                     #(conj % [ox oy x y])))
       state)))
 
 (defn paint [drawing]
-  (let [l drawing]
-   (gfx/line (.-ctx js/window) (l 0) (l 1) (l 2) (l 3))))
+  (apply gfx/line (concat [(.-ctx js/window)] drawing)))
 
 (defn draw []
   (doseq [item (:drawings @current-state)]
@@ -81,12 +75,7 @@
                       (swap! current-state
                              (fn [s]
                                (update-in s [:mouse]
-                                          (fn [m]
-                                            (assoc m
-                                                   :pressed true
-                                                   :time t
-                                                   :x x
-                                                   :y y)))))))
+                                          #(assoc % :pressed true :time t :x x :y y))))))
                   (swap! current-state assoc-in [:mouse :pressed] false))
                 (draw))))
 
